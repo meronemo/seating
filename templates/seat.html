@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자리 배치 결과</title>
+    <link rel="stylesheet" href="/static/seat.css" />
+</head>
+{% if error %}
+<script>
+    alert("자리 배치 중 오류 발생: {{ error }}");
+    window.location.href = "/";
+</script>
+{% endif %}
+<body>
+    <main class="container">
+        <h1>자리 배치 결과</h1>
+        
+        <a href="/" class="back-button">처음으로 돌아가기</a>
+        
+        <section class="image-section student-section">
+            <img src="/static/output_student.jpg" alt="학생용 자리 배치표" class="student-img" />
+        </section>
+        
+        <div class="divider"></div>
+        
+        <section class="image-section teacher-section">
+            <img src="/static/output_teacher.jpg" alt="교사용 자리 배치표" class="teacher-img" id="teacher-img"/>
+            <h3>교탁 부착용 이미지</h3>
+            <div class="action-buttons">
+                <a href="/static/output_teacher.jpg" download="output_teacher.jpg" class="download-btn">
+                    다운로드
+                </a>
+                <a id="print-btn" class="print-btn">
+                    인쇄하기
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // 페이지 로드 시 부드러운 애니메이션
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.image-section');
+            sections.forEach((section, index) => {
+                setTimeout(() => {
+                    section.style.opacity = '0';
+                    section.style.transform = 'translateY(20px)';
+                    section.style.transition = 'all 0.6s ease';
+                    
+                    setTimeout(() => {
+                        section.style.opacity = '1';
+                        section.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 200);
+            });
+        });
+
+        // 인쇄 기능
+        document.getElementById('print-btn').addEventListener('click', function() {
+            const btn = this;
+            const originalText = btn.innerHTML;
+            
+            // 로딩 상태 표시
+            btn.innerHTML = '⏳ 준비 중...';
+            btn.disabled = true;
+            btn.classList.add('loading');
+            
+            setTimeout(() => {
+                const img = document.getElementById('teacher-img');
+                const imgSrc = img.src;
+                const newWindow = window.open('', '_blank');
+
+                newWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>자리 배치 인쇄</title>
+                            <style>
+                                @page {
+                                    size: landscape;
+                                    margin: 0;
+                                }
+                                body {
+                                    margin: 0; 
+                                    display: flex; 
+                                    justify-content: center; 
+                                    align-items: center; 
+                                    height: 100vh; 
+                                    background: #f8f9fa;
+                                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                }
+                                img {
+                                    max-width: 95%; 
+                                    max-height: 95vh;
+                                    border-radius: 8px;
+                                    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                                }
+                                .print-header {
+                                    position: absolute;
+                                    top: 20px;
+                                    left: 20px;
+                                    font-size: 18px;
+                                    font-weight: bold;
+                                    color: #333;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <img src="${imgSrc}" alt="자리 배치 이미지" />
+                            <script>
+                                window.onload = function() {
+                                    setTimeout(() => {
+                                        window.print();
+                                        window.onafterprint = () => window.close();
+                                    }, 500);
+                                }
+                            <\/script>
+                        </body>
+                    </html>
+                `);
+                newWindow.document.close();
+                
+                // 버튼 상태 복원
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    btn.classList.remove('loading');
+                }, 1000);
+            }, 800);
+        });
+
+        // 이미지 로드 에러 처리
+        document.querySelectorAll('img').forEach(img => {
+            img.addEventListener('error', function() {
+                this.style.display = 'none';
+                const errorMsg = document.createElement('div');
+                errorMsg.style.cssText = `
+                    background: #fed7d7;
+                    color: #c53030;
+                    padding: 20px;
+                    border-radius: 12px;
+                    text-align: center;
+                    border: 2px solid #feb2b2;
+                `;
+                errorMsg.innerHTML = '⚠️ 이미지를 불러올 수 없습니다.';
+                this.parentNode.appendChild(errorMsg);
+            });
+        });
+    </script>
+</body>
+</html>

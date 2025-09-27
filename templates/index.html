@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1-6 자리 배치</title>
+    <link rel="stylesheet" href="/static/index.css" />
+</head>
+<body>
+    <main class="container">
+        <h1>HAFS 1-6 자리 배치</h1>
+        <form action="/seat" method="get">
+            <button type="submit" class="submit-btn">
+                자리 배치하기
+            </button>
+        </form>
+    </main>
+
+    <script>
+        // 폼 제출 시 버튼 비활성화 및 로딩 표시
+        document.querySelector('form').addEventListener('submit', function() {
+            const btn = document.querySelector('.submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="icon">⏳</span>배치 중...';
+        });
+
+        // 입력 필드에 포커스 시 부드러운 애니메이션
+        document.querySelector('input').addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+            this.parentElement.style.transition = 'transform 0.2s ease';
+        });
+
+        document.querySelector('input').addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+    </script>
+</body>
+</html>

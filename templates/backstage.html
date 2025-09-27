@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>backstage</title>
+	<link rel="stylesheet" href="https://unpkg.com/mvp.css">
+</head>
+<body>
+	<main>
+		<h1>backstage</h1>
+		<section>
+			<p>
+				{% if file_exists %}
+					<strong>previous_seat.txt 파일 존재</strong>
+				{% else %}
+					<strong>previous_seat.txt 파일 존재하지 않음</strong>
+				{% endif %}
+			</p>
+		</section>
+		<section>
+			<pre style="background:#f4f4f4; padding:1em;">{{ file_content if file_exists else '파일 없음' }}</pre>
+		</section>
+		<section>
+			<form method="post" action="/backstage/update">
+				<textarea name="new_content" rows="5" style="width:100%;">{{ file_content if file_exists else '' }}</textarea>
+				<button type="submit">내용 변경</button>
+			</form>
+		</section>
+	</main>
+</body>
+</html>
