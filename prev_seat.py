@@ -1,0 +1,42 @@
+import os
+import requests
+
+edge_config_id = os.getenv('EDGE_CONFIG_ID')
+team_id = os.getenv('TEAM_ID')
+api_token = os.getenv('API_TOKEN')
+url = f'https://api.vercel.com/v1/edge-config/{edge_config_id}/items'
+params = {
+    'teamId': team_id
+}
+headers = {
+    'Authorization': f'Bearer {api_token}'
+}
+
+def get_prev_edge_stu():
+    if os.getenv('VERCEL') == '1': # vercel 환경 (edge config)
+        res = requests.get(url, headers=headers, params=params)
+        res.raise_for_status()
+        value = res.json()[0]['value']
+        return [int(x) for x in value.split()]
+    else: # local 환경 (txt)
+        with open('previous_seat.txt', 'r') as f:
+            lines = f.readlines()
+            return [int(x) for x in lines[0].split()]
+        
+def update_prev_edge_stu(new_content):
+    if os.getenv('VERCEL') == '1': # vercel 환경 (edge config)
+        body = {
+            "items": [
+                {
+                    "operation": "update",
+                    "key": "previous_seat",
+                    "value": new_content
+                }
+            ]
+        }
+        res = requests.patch(url, headers=headers, params=params, json=body)
+        res.raise_for_status()
+    else: # local 환경 (txt)
+        with open('previous_seat.txt', 'w') as f:
+            f.write(new_content)
+    return
