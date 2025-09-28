@@ -12,18 +12,29 @@ headers = {
     'Authorization': f'Bearer {api_token}'
 }
 
-def get_prev_edge_stu():
+def get_prev_edge_stu(raw=0):
     if os.getenv('VERCEL') == '1': # vercel 환경 (edge config)
         res = requests.get(url, headers=headers, params=params)
         res.raise_for_status()
         value = res.json()[0]['value']
-        return [int(x) for x in value.split()]
+        if raw:
+            return value
+        else:
+            return [int(x) for x in value.split()]
     else: # local 환경 (txt)
         with open('previous_seat.txt', 'r') as f:
             lines = f.readlines()
-            return [int(x) for x in lines[0].split()]
+            if raw:
+                return lines[0]
+            else:
+                return [int(x) for x in lines[0].split()]
         
 def update_prev_edge_stu(new_content):
+    # 입력값 검증
+    items = new_content.strip().split()
+    if len(items) != 14 or not all(x.isdigit() for x in items):
+        raise Exception("previous_seat 값은 공백으로 구분된 14개의 정수여야 합니다.")
+
     if os.getenv('VERCEL') == '1': # vercel 환경 (edge config)
         body = {
             "items": [

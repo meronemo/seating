@@ -44,7 +44,7 @@ async def seat(request: Request):
 async def backstage(request: Request):
     return templates.TemplateResponse('backstage.html', {
         'request': request,
-        'content': get_prev_edge_stu()
+        'content': get_prev_edge_stu(raw=1) # list 형식으로 가공하지 않고 그대로 가져와서 보여줌
     })
 
 @app.post('/backstage/update', response_class=HTMLResponse)
@@ -52,5 +52,5 @@ async def backstage_update(request: Request, new_content: str = Form(...)):
     update_prev_edge_stu(new_content)
     return templates.TemplateResponse('backstage.html', {
         'request': request,
-        'content': get_prev_edge_stu()
+        'content': get_prev_edge_stu(raw=1)
     })
