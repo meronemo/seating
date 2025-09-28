@@ -34,8 +34,9 @@ def run_seat():
     random.shuffle(nonedge_stu)
     random.shuffle(edge_stu)
 
-    # previous_seat 업데이트
-    update_prev_edge_stu(' '.join(str(i) for i in edge_stu))
+    # previous_seat 업데이트 (실제 자리 배치: production 환경 때만)
+    if os.getenv('VERCEL_ENV') == 'production':
+        update_prev_edge_stu(' '.join(str(i) for i in edge_stu))
 
     # 학생 번호 + 이름을 자리 배열에 배치
     for students, seats in [(nonedge_stu, nonedge_seat), (edge_stu, edge_seat)]:
