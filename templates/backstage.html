@@ -4,19 +4,38 @@
 	<meta charset="UTF-8">
 	<title>backstage</title>
 	<link rel="stylesheet" href="https://unpkg.com/mvp.css">
+	<link rel="stylesheet" href="/static/backstage.css">
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.8/kakao.min.js" integrity="sha384-WUSirVbD0ASvo37f3qQZuDap8wy76aJjmGyXKOYgPL/NdAs8HhgmPlk9dz2XQsNv" crossorigin="anonymous"></script>
 </head>
 <body>
 	<main>
 		<h1>backstage</h1>
-		<section>
-			<pre style="background:#f4f4f4; padding:1em;">{{ content  }}</pre>
-		</section>
-		<section>
-			<form method="post" action="/backstage/update">
-				<textarea name="new_content" rows="5" style="width:100%;">{{ content }}</textarea>
-				<button type="submit">내용 변경</button>
+		<div>
+            <form method="post" action="/backstage/update">
+                <strong>previous_seat</strong>
+                <input type="text" name="new_content" value="{{ content }}">
+				<button type="submit">변경</button>
 			</form>
-		</section>
+		</div>
+		
+		<div class="gallery-container" id="gallery">
+			<div class="image-item" style="display: none;" id="image-template">
+				<div class="image-header">
+					<span class="image-name">이미지 이름</span>
+					<div class="button-group">
+						<button class="btn btn-share">공유</button>
+					</div>
+				</div>
+				<div class="image-placeholder">
+					이미지 로딩 중...
+				</div>
+			</div>
+		</div>
 	</main>
+
+	<script>
+		const KAKAO_API_KEY = "{{ kakao_api_key }}";
+	</script>
+	<script src="/static/backstage.js"></script>
 </body>
 </html>

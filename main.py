@@ -5,7 +5,9 @@ from fastapi.templating import Jinja2Templates
 from seat import run_seat
 import logging
 import base64
+import os
 from prev_seat import get_prev_edge_stu, update_prev_edge_stu
+from image import get_blob
 
 app = FastAPI()
 
@@ -22,7 +24,10 @@ async def exception_handler(request: Request, exc: Exception):
 
 @app.get('/', response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse('index.html', {'request': request})
+    return templates.TemplateResponse('index.html', {
+        'request': request,
+        'content': get_prev_edge_stu(raw=1)
+    })
 
 @app.get('/seat', response_class=HTMLResponse)
 async def seat(request: Request):
@@ -38,13 +43,14 @@ async def seat(request: Request):
         return templates.TemplateResponse('seat.html', {
             'request': request,
             'vercel': 0
-            })
+        })
 
 @app.get('/backstage', response_class=HTMLResponse)
 async def backstage(request: Request):
     return templates.TemplateResponse('backstage.html', {
         'request': request,
-        'content': get_prev_edge_stu(raw=1) # list 형식으로 가공하지 않고 그대로 가져와서 보여줌
+        'content': get_prev_edge_stu(raw=1), # list 형식으로 가공하지 않고 그대로 가져와서 보여줌
+        'kakao_api_key': os.getenv('KAKAO_API_KEY')
     })
 
 @app.post('/backstage/update', response_class=HTMLResponse)
@@ -52,5 +58,10 @@ async def backstage_update(request: Request, new_content: str = Form(...)):
     update_prev_edge_stu(new_content)
     return templates.TemplateResponse('backstage.html', {
         'request': request,
-        'content': get_prev_edge_stu(raw=1)
+        'content': get_prev_edge_stu(raw=1),
+        'kakao_api_key': os.getenv('KAKAO_API_KEY')
     })
+
+@app.get('/backstage/get_images', response_class=JSONResponse)
+async def backstage_get_images(request: Request):
+    return get_blob()

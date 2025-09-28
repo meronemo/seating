@@ -41,3 +41,11 @@ def generate_image(seat, type): # type == student | teacher
     else: # local 환경
         img.save(f'static/output_{type}.jpg')
         return
+
+def get_blob():
+    blobs = vercel_blob.list()['blobs']
+    image_items = []
+    for item in blobs:
+        if item.get('pathname') != 'robots.txt':
+            image_items.append(item)
+    return image_items

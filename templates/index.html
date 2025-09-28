@@ -9,6 +9,11 @@
 <body>
     <main class="container">
         <h1>HAFS 1-6 자리 배치</h1>
+        <strong>저번 끝자리에 앉은 사람 번호</strong>
+        <section>
+            <div style="background:#f4f4f4; padding:1em;">{{ content }}</div>
+		</section>
+        <br>
         <form action="/seat" method="get">
             <button type="submit" class="submit-btn">
                 자리 배치하기
