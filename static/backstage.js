@@ -29,7 +29,7 @@ function shareImage(url, name) {
 
 Kakao.init(KAKAO_API_KEY);
 
-fetch('/backstage/get_images')
+fetch('/api/get_images')
     .then(res => res.json())
     .then(data => {
         data.forEach(imageData => {

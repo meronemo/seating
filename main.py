@@ -4,10 +4,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from seat import run_seat
 import logging
-import base64
 import os
 from prev_seat import get_prev_edge_stu, update_prev_edge_stu
-from image import get_blob
+from image import upload_blob, get_blob
 
 app = FastAPI()
 
@@ -32,18 +31,12 @@ async def index(request: Request):
 @app.get('/seat', response_class=HTMLResponse)
 async def seat(request: Request):
     res = run_seat()
-    if res: # vercel 환경에서는 stu_img, tea_img binary data로 return됨
-        return templates.TemplateResponse('seat.html', {
-            'request': request,
-            'vercel': 1,
-            'stu_img': base64.b64encode(res[0]).decode('utf-8'),
-            'tea_img': base64.b64encode(res[1]).decode('utf-8')
-        })
-    else: # local 환경에서는 image를 file로 보여줌
-        return templates.TemplateResponse('seat.html', {
-            'request': request,
-            'vercel': 0
-        })
+    return templates.TemplateResponse('seat.html', {
+        'request': request,
+        'stu_img': res[0],
+        'tea_img': res[1],
+        'date': res[2]
+    })
 
 @app.get('/backstage', response_class=HTMLResponse)
 async def backstage(request: Request):
@@ -62,6 +55,19 @@ async def backstage_update(request: Request, new_content: str = Form(...)):
         'kakao_api_key': os.getenv('KAKAO_API_KEY')
     })
 
-@app.get('/backstage/get_images', response_class=JSONResponse)
-async def backstage_get_images(request: Request):
+@app.post('/api/upload_image', response_class=JSONResponse)
+async def upload_image(request: Request):
+    try:
+        data = await request.json()
+        res = upload_blob(data['date'], data['type'], data['image_data'])
+        if res: # production 환경에서 업로드가 성공적으로 된 경우
+            return {"status": "success"} 
+        else: # production 환경이 아니라서 업로드를 진행하지 않은 경우
+            return {"status": "skipped"} 
+    except Exception as e: # 업로드 중 실패한 경우
+        logging.error(f"Upload failed: {str(e)}")
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+@app.get('/api/get_images', response_class=JSONResponse)
+async def get_images(request: Request):
     return get_blob()

@@ -45,14 +45,12 @@ def run_seat():
 
     # 배치 결과 이미지 생성
     stu_seat = seat.flatten()
-    stu_img = generate_image(stu_seat, 'student')
+    stu_img, date = generate_image(stu_seat, 'student')
     tea_seat = np.rot90(seat, 2).flatten() # 90도 회전 2번(180도)
-    tea_img = generate_image(tea_seat, 'teacher')
+    tea_img, _ = generate_image(tea_seat, 'teacher')
 
-    if os.getenv('VERCEL') == '1':
-        return stu_img, tea_img
-    else:
-        return
-
+    # /seat로 이미지 binary data와 date 전달
+    return stu_img, tea_img, date
+    
 if __name__ == '__main__':
     run_seat()
