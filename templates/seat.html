@@ -19,23 +19,17 @@
         <a href="/" class="back-button">처음으로 돌아가기</a>
         
         <section class="image-section student-section">
-            <img src="/static/output_student.jpg" alt="학생용 자리 배치표" class="student-img" />
+            <img src="{% if vercel == 1 %}data:image/jpeg;base64,{{ stu_img }}{% else %}/static/output_student.jpg{% endif %}" alt="학생용 자리 배치표" class="student-img" />
         </section>
-        
         <div class="divider"></div>
-        
         <section class="image-section teacher-section">
-            <img src="/static/output_teacher.jpg" alt="교사용 자리 배치표" class="teacher-img" id="teacher-img"/>
+            <img src="{% if vercel == 1 %}data:image/jpeg;base64,{{ tea_img }}{% else %}/static/output_teacher.jpg{% endif %}" alt="교사용 자리 배치표" class="teacher-img" id="teacher-img"/>
             <h3>교탁 부착용 이미지</h3>
             <div class="action-buttons">
-                <a href="/static/output_teacher.jpg" download="output_teacher.jpg" class="download-btn">
-                    다운로드
-                </a>
                 <a id="print-btn" class="print-btn">
                     인쇄하기
                 </a>
             </div>
-        </section>
     </main>
 
     <script>

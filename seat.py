@@ -1,33 +1,10 @@
-from PIL import Image, ImageDraw, ImageFont
-from datetime import datetime
-from zoneinfo import ZoneInfo
 import numpy as np
 import random
 from dotenv import dotenv_values
 import ast
 import os
 from prev_seat import get_prev_edge_stu, update_prev_edge_stu
-
-# 이미지 생성
-def generate_image(seat, type):
-    font = ImageFont.truetype('static/NanumGothic.ttf', 70)
-    font_date = ImageFont.truetype('static/NanumGothic.ttf', 55)
-    base_img_path = f'static/base_{type}.jpg'
-    output_img_path = f'static/output_{type}.jpg'
-    date = datetime.now(tz=ZoneInfo('Asia/Seoul')).strftime('%Y-%m-%d')
-    x_coords = [150, 540, 980, 1370, 1810, 2200, 2640, 3030]
-    y_coords = [810, 1130, 1450, 1770]
-    date_coord = (1600, 2380)
-
-    img = Image.open(base_img_path)
-    draw = ImageDraw.Draw(img)
-    idx = 0
-    for row in y_coords:
-        for col in x_coords:
-            draw.text((col, row), seat[idx], font=font, fill='black')
-            idx += 1
-    draw.text(date_coord, date, font=font_date, fill='black')
-    img.save(output_img_path)
+from image import generate_image
 
 # 자리 배치
 def run_seat():
@@ -67,10 +44,14 @@ def run_seat():
 
     # 배치 결과 이미지 생성
     stu_seat = seat.flatten()
-    generate_image(stu_seat, 'student')
+    stu_img = generate_image(stu_seat, 'student')
     tea_seat = np.rot90(seat, 2).flatten() # 90도 회전 2번(180도)
-    generate_image(tea_seat, 'teacher')
-    return
+    tea_img = generate_image(tea_seat, 'teacher')
+
+    if os.getenv('VERCEL') == '1':
+        return stu_img, tea_img
+    else:
+        return
 
 if __name__ == '__main__':
     run_seat()

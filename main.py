@@ -3,8 +3,8 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from seat import run_seat
-import uvicorn
 import logging
+import base64
 from prev_seat import get_prev_edge_stu, update_prev_edge_stu
 
 app = FastAPI()
@@ -27,9 +27,18 @@ async def index(request: Request):
 @app.get('/seat', response_class=HTMLResponse)
 async def seat(request: Request):
     res = run_seat()
-    if res:
-        return templates.TemplateResponse('seat.html', {'request': request, 'error': res})
-    return templates.TemplateResponse('seat.html', {'request': request})
+    if res: # vercel 환경에서는 stu_img, tea_img binary data로 return됨
+        return templates.TemplateResponse('seat.html', {
+            'request': request,
+            'vercel': 1,
+            'stu_img': base64.b64encode(res[0]).decode('utf-8'),
+            'tea_img': base64.b64encode(res[1]).decode('utf-8')
+        })
+    else: # local 환경에서는 image를 file로 보여줌
+        return templates.TemplateResponse('seat.html', {
+            'request': request,
+            'vercel': 0
+            })
 
 @app.get('/backstage', response_class=HTMLResponse)
 async def backstage(request: Request):
