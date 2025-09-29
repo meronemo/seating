@@ -28,6 +28,10 @@ async def index(request: Request):
         'content': get_prev_edge_stu(raw=1)
     })
 
+@app.head('/', response_class=HTMLResponse)
+async def health_check():
+    return HTMLResponse(status_code=200)
+
 @app.get('/seat', response_class=HTMLResponse)
 async def seat(request: Request):
     res = run_seat()
