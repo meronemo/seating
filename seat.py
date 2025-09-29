@@ -36,6 +36,7 @@ def run_seat():
 
     # previous_seat 업데이트 (실제 자리 배치: production 환경 때만)
     if os.getenv('VERCEL_ENV') == 'production':
+        edge_stu.sort()
         update_prev_edge_stu(' '.join(str(i) for i in edge_stu))
 
     # 학생 번호 + 이름을 자리 배열에 배치

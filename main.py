@@ -48,7 +48,11 @@ async def backstage(request: Request):
 
 @app.post('/backstage/update', response_class=HTMLResponse)
 async def backstage_update(request: Request, new_content: str = Form(...)):
+    # 입력값 오름차순 정렬
+    nums = sorted([int(x.strip()) for x in new_content.split()])
+    new_content = ' '.join(map(str, nums))
     update_prev_edge_stu(new_content)
+    
     return templates.TemplateResponse('backstage.html', {
         'request': request,
         'content': get_prev_edge_stu(raw=1),
