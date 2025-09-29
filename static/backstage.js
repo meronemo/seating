@@ -32,6 +32,7 @@ Kakao.init(KAKAO_API_KEY);
 fetch('/api/get_images')
     .then(res => res.json())
     .then(data => {
+        data.sort((a, b) => parseInt(b.pathname.substring(0, 10)) - parseInt(a.pathname.substring(0, 10))); // 내림차순 정렬(최근 이미지부터 표시)
         data.forEach(imageData => {
             createImageItem(imageData);
         });
