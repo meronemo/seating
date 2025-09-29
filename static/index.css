@@ -52,49 +52,10 @@ h1::after {
     border-radius: 2px;
 }
 
-.form-group {
-    margin-bottom: 25px;
-}
-
-label {
-    display: block;
-    font-weight: 600;
-    color: #4a5568;
-    margin-bottom: 8px;
-    font-size: 1.1rem;
-}
-
-input[type="text"] {
-    width: 100%;
-    padding: 15px 20px;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    background: #f8fafc;
-}
-
-input[type="text"]:focus {
-    outline: none;
-    border-color: #4299e1;
-    background: white;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
-    transform: translateY(-1px);
-}
-
-input[type="text"]::placeholder {
-    color: #a0aec0;
-    font-style: italic;
-}
-
-.error-message {
-    color: #e53e3e;
-    font-size: 0.9rem;
-    margin-top: 8px;
-    padding: 10px;
-    background: rgba(229, 62, 62, 0.1);
+.prev_edge {
+    background: #f4f4f4;
+    padding: 1em;
     border-radius: 8px;
-    border-left: 4px solid #e53e3e;
 }
 
 .submit-btn {

@@ -4,14 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>자리 배치 결과</title>
-    <link rel="stylesheet" href="/static/seat.css" />
+    <link rel="stylesheet" href="/static/seat.css"/>
+    
 </head>
+
 {% if error %}
 <script>
     alert("자리 배치 중 오류 발생: {{ error }}");
     window.location.href = "/";
 </script>
 {% endif %}
+
 <body>
     <main class="container">
         <h1>자리 배치 결과</h1>
@@ -30,211 +33,15 @@
                     인쇄하기
                 </a>
             </div>
+        </section>
+
+        <div id='upload-status'></div>
     </main>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 페이지 로드 후 부드러운 애니메이션
-            const sections = document.querySelectorAll('.image-section');
-            sections.forEach((section, index) => {
-                setTimeout(() => {
-                    section.style.opacity = '0';
-                    section.style.transform = 'translateY(20px)';
-                    section.style.transition = 'all 0.6s ease';
-                    
-                    setTimeout(() => {
-                        section.style.opacity = '1';
-                        section.style.transform = 'translateY(0)';
-                    }, 100);
-                }, index * 200);
-            });
-
-            // 이미지 업로드 request 전송
-            setTimeout(() => {
-                const stuImg = '{{ stu_img }}';
-                const teaImg = '{{ tea_img }}';
-                
-                if (stuImg && teaImg) {
-                    const date = '{{ date }}';
-                    
-                    // 업로드 상태 표시 영역 생성
-                    const statusDiv = document.createElement('div');
-                    statusDiv.id = 'upload-status';
-                    statusDiv.style.cssText = `
-                        position: fixed;
-                        top: 20px;
-                        right: 20px;
-                        padding: 10px 15px;
-                        border-radius: 8px;
-                        font-size: 14px;
-                        z-index: 1000;
-                        max-width: 300px;
-                        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                    `;
-                    document.body.appendChild(statusDiv);
-                    
-                    let uploadCount = 0;
-                    const totalUploads = 2;
-                    
-                    function updateStatus(type, status, message) {
-                        uploadCount++;
-                        
-                        let statusColor = '';
-                        let statusIcon = '';
-                        
-                        if (status === 'success') {
-                            statusColor = '#d4edda; color: #155724; border: 1px solid #c3e6cb';
-                            statusIcon = '✅';
-                        } else if (status === 'skipped') {
-                            statusColor = '#fff3cd; color: #856404; border: 1px solid #ffeaa7';
-                            statusIcon = '⏭️';
-                        } else if (status === 'error') {
-                            statusColor = '#f8d7da; color: #721c24; border: 1px solid #f5c6cb';
-                            statusIcon = '❌';
-                        }
-                        
-                        statusDiv.style.background = statusColor.split(';')[0].split(':')[1];
-                        statusDiv.style.color = statusColor.split(';')[1].split(':')[1];
-                        statusDiv.style.border = statusColor.split(';')[2].split(':')[1];
-                        
-                        statusDiv.innerHTML += `<div>${statusIcon} ${type}: ${message}</div>`;
-                    }
-                    
-                    // 학생용 이미지 업로드
-                    fetch('/api/upload_image', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            date: date,
-                            type: 'student',
-                            image_data: stuImg
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        updateStatus('학생용 이미지', data.status, data.message || '업로드 처리됨');
-                    })
-                    .catch(err => {
-                        updateStatus('학생용 이미지', 'error', '업로드 실패');
-                        console.log('Student image upload failed:', err);
-                    });
-                    
-                    // 교사용 이미지 업로드
-                    fetch('/api/upload_image', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            date: date,
-                            type: 'teacher',
-                            image_data: teaImg
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        updateStatus('교사용 이미지', data.status, data.message || '업로드 처리됨');
-                    })
-                    .catch(err => {
-                        updateStatus('교사용 이미지', 'error', '업로드 실패');
-                        console.log('Teacher image upload failed:', err);
-                    });
-                }
-            }, 1000); // 1초 후 업로드 시작
-        });
-
-        // 인쇄 기능
-        document.getElementById('print-btn').addEventListener('click', function() {
-            const btn = this;
-            const originalText = btn.innerHTML;
-            
-            // 로딩 상태 표시
-            btn.innerHTML = '⏳ 준비 중...';
-            btn.disabled = true;
-            btn.classList.add('loading');
-            
-            setTimeout(() => {
-                const img = document.getElementById('teacher-img');
-                const imgSrc = img.src;
-                const newWindow = window.open('', '_blank');
-
-                newWindow.document.write(`
-                    <html>
-                        <head>
-                            <title>자리 배치 인쇄</title>
-                            <style>
-                                @page {
-                                    size: landscape;
-                                    margin: 0;
-                                }
-                                body {
-                                    margin: 0; 
-                                    display: flex; 
-                                    justify-content: center; 
-                                    align-items: center; 
-                                    height: 100vh; 
-                                    background: #f8f9fa;
-                                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                                }
-                                img {
-                                    max-width: 95%; 
-                                    max-height: 95vh;
-                                    border-radius: 8px;
-                                    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-                                }
-                                .print-header {
-                                    position: absolute;
-                                    top: 20px;
-                                    left: 20px;
-                                    font-size: 18px;
-                                    font-weight: bold;
-                                    color: #333;
-                                }
-                            </style>
-                        </head>
-                        <body>
-                            <img src="${imgSrc}" alt="자리 배치 이미지" />
-                            <script>
-                                window.onload = function() {
-                                    setTimeout(() => {
-                                        window.print();
-                                        window.onafterprint = () => window.close();
-                                    }, 500);
-                                }
-                            <\/script>
-                        </body>
-                    </html>
-                `);
-                newWindow.document.close();
-                
-                // 버튼 상태 복원
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                    btn.classList.remove('loading');
-                }, 1000);
-            }, 800);
-        });
-
-        // 이미지 로드 에러 처리
-        document.querySelectorAll('img').forEach(img => {
-            img.addEventListener('error', function() {
-                this.style.display = 'none';
-                const errorMsg = document.createElement('div');
-                errorMsg.style.cssText = `
-                    background: #fed7d7;
-                    color: #c53030;
-                    padding: 20px;
-                    border-radius: 12px;
-                    text-align: center;
-                    border: 2px solid #feb2b2;
-                `;
-                errorMsg.innerHTML = '⚠️ 이미지를 불러올 수 없습니다.';
-                this.parentNode.appendChild(errorMsg);
-            });
-        });
+        const stuImg = '{{ stu_img }}';
+        const teaImg = '{{ tea_img }}';
+        const date = '{{ date }}';
     </script>
+    <script src="/static/seat.js"></script>
 </body>
 </html>

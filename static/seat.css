@@ -74,45 +74,12 @@ h1::after {
     box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
 }
 
-.image-section {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    margin-bottom: 40px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-    border: 2px solid #f7fafc;
-    transition: all 0.3s ease;
-}
-
-.image-section:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
-}
-
-.student-section {
-    text-align: center;
-}
-
-.student-section h2 {
-    color: #2d3748;
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
 .student-img {
     max-width: 100%;
     height: auto;
     border-radius: 12px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
-}
-
-.student-img:hover {
-    transform: scale(1.02);
 }
 
 .teacher-section h3 {
@@ -129,30 +96,6 @@ h1::after {
     gap: 15px;
     align-items: center;
     flex-wrap: wrap;
-}
-
-.download-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
-    color: white;
-    text-decoration: none;
-    border-radius: 12px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(66, 153, 225, 0.3);
-}
-
-.download-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(66, 153, 225, 0.4);
-}
-
-.download-btn::before {
-    content: '📥';
-    font-size: 1.1em;
 }
 
 .print-btn {
@@ -190,6 +133,18 @@ h1::after {
     margin: 40px 0;
 }
 
+#upload-status {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    z-index: 1000;
+    max-width: 300px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
     .container {
@@ -206,49 +161,7 @@ h1::after {
         align-items: stretch;
     }
 
-    .download-btn, .print-btn {
+    .print-btn {
         justify-content: center;
     }
-}
-
-/* 성공 메시지 스타일 */
-.success-message {
-    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-    color: white;
-    padding: 15px 20px;
-    border-radius: 12px;
-    margin-bottom: 25px;
-    text-align: center;
-    font-weight: 600;
-    box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
-}
-
-.success-message::before {
-    content: '✅ ';
-    font-size: 1.2em;
-}
-
-/* 로딩 애니메이션 */
-.loading {
-    opacity: 0.7;
-    pointer-events: none;
-}
-
-.loading::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 40px;
-    height: 40px;
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #667eea;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
