@@ -31,13 +31,14 @@ def run_seat():
     prev_nonedge_stu = list(set(range(1, 32+1)) - set(prev_edge_stu))
     nonedge_stu = prev_edge_stu + random.sample(prev_nonedge_stu, 4) # 이번 nonedge에 앉을 학생 번호 (저번 edge + 저번 non_edge 4명 = 18명)
     edge_stu = list(set(range(1, 32+1)) - set(nonedge_stu)) # 이번 edge에 앉을 학생 번호
-    random.shuffle(nonedge_stu)
-    random.shuffle(edge_stu)
 
     # previous_seat 업데이트 (실제 자리 배치: production 환경 때만)
     if os.getenv('VERCEL_ENV') == 'production':
         edge_stu.sort()
         update_prev_edge_stu(' '.join(str(i) for i in edge_stu))
+    
+    random.shuffle(nonedge_stu)
+    random.shuffle(edge_stu)
 
     # 학생 번호 + 이름을 자리 배열에 배치
     for students, seats in [(nonedge_stu, nonedge_seat), (edge_stu, edge_seat)]:
